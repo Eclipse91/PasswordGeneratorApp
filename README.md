@@ -1,4 +1,3 @@
-```markdown
 # Password Generator Application
 
 This is a simple password generator application built using Python and PyQt5. It allows users to generate strong passwords with various customizable options.
