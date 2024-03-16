@@ -16,10 +16,7 @@ This is a simple password generator application built using Python and PyQt5. It
 
 - Python 3.x
 - Required Python packages can be installed using `pip install -r requirements.txt`
-- libxcb-xinerama0 must be installed ina Debian distribution
-   ```bash
-   sudo apt-get install --reinstall libxcb-xinerama0   
-   ```
+- libxcb-xinerama0 must be installed ina Debian distribution using `sudo apt-get install --reinstall libxcb-xinerama0`
    
 ## Getting Started
 
