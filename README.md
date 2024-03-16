@@ -23,17 +23,17 @@ Before running the program, ensure you have the following installed:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your_username/password_generator.git
+   git clone https://github.com/Eclipse91/PasswordGeneratorApp.git
    ```
 
 2. Navigate to the project directory:
    ```bash
-   cd password_generator
+   cd PasswordGeneratorApp
    ```
 
 3. Install dependencies:
    ```bash
-   pip install PyQt5
+   pip install -r requirements.txt
    ```
 
 ## Usage
