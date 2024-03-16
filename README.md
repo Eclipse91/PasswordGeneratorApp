@@ -12,14 +12,16 @@ This is a simple password generator application built using Python and PyQt5. It
   - Length of symbols
 - User-friendly graphical interface using PyQt5
 
-## Prerequisites
-
-Before running the program, ensure you have the following installed:
+## Requirements
 
 - Python 3.x
-- PyQt5 library
-
-## Installation
+- Required Python packages can be installed using `pip install -r requirements.txt`
+- libxcb-xinerama0 must be installed ina Debian distribution
+   ```bash
+   sudo apt-get install --reinstall libxcb-xinerama0   
+   ```
+   
+## Getting Started
 
 1. Clone the repository:
    ```bash
@@ -35,20 +37,23 @@ Before running the program, ensure you have the following installed:
    ```bash
    pip install -r requirements.txt
    ```
+4.Run the application:
+
+   ```bash
+   python3 main.py
+   ```
 
 ## Usage
 
-1. Run the program using Python:
-   ```bash
-   python main.py
-   ```
-
-2. Customize your password preferences using the sliders and input fields.
-3. Click on "Generate Password" to create a new password based on your preferences.
-4. The generated password will be displayed in the application window.
+1. Customize your password preferences using the sliders and input fields.
+2. Click on "Generate Password" to create a new password based on your preferences.
+3. The generated password will be displayed in the application window.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE](LICENSE) file for details.
 
-```
+## Notes
+
+Feel free to contribute or report issues!
+This README provides a clearer structure, concise information, and instructions for setting up and running the QuestionsWebApp. Adjust the content as needed for your project.
