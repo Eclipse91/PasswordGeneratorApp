@@ -37,7 +37,7 @@ This is a simple password generator application built using Python and PyQt5. It
    ```bash
    pip install -r requirements.txt
    ```
-4.Run the application:
+4. Run the application:
 
    ```bash
    python3 main.py
