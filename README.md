@@ -1,4 +1,4 @@
-# Password Generator Application
+# PasswordGeneratorApplication
 
 This is a simple password generator application built using Python and PyQt5. It allows users to generate strong passwords with various customizable options.
 
@@ -56,4 +56,4 @@ This project is licensed under the GNU GENERAL PUBLIC LICENSE - see the [LICENSE
 ## Notes
 
 Feel free to contribute or report issues!
-This README provides a clearer structure, concise information, and instructions for setting up and running the QuestionsWebApp. Adjust the content as needed for your project.
+This README provides a clearer structure, concise information, and instructions for setting up and running the PasswordGeneratorApp. Adjust the content as needed for your project.
