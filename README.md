@@ -45,6 +45,7 @@ This is a simple password generator application built using Python and PyQt5. It
 1. Customize your password preferences using the sliders and input fields.
 2. Click on "Generate Password" to create a new password based on your preferences.
 3. The generated password will be displayed in the application window.
+4. You can copy the password clicking the button
 
 ## License
 
