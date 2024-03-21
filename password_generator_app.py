@@ -62,10 +62,10 @@ class PasswordGeneratorApp(QWidget):
         self.insert_position_value_label = QLabel(str(self.insert_position_slider.value()) + '° position')
         generator_layout.addWidget(self.insert_position_value_label)
 
+        # For lowercase slider
         self.lowercase_label = QLabel("Lowercase letters length:")
         generator_layout.addWidget(self.lowercase_label)
 
-        # For lowercase slider
         self.lowercase_slider = QSlider(Qt.Horizontal)
         self.lowercase_slider.setMinimum(0)
         self.lowercase_slider.setMaximum(20)
@@ -79,10 +79,10 @@ class PasswordGeneratorApp(QWidget):
         self.lowercase_value_label = QLabel(str(self.lowercase_slider.value()))
         generator_layout.addWidget(self.lowercase_value_label)
 
+        # For uppercase slider (similar pattern as lowercase slider)
         self.uppercase_label = QLabel("Uppercase letters length:")
         generator_layout.addWidget(self.uppercase_label)
 
-        # For uppercase slider (similar pattern as lowercase slider)
         self.uppercase_slider = QSlider(Qt.Horizontal)
         self.uppercase_slider.setMinimum(0)
         self.uppercase_slider.setMaximum(20)
@@ -94,10 +94,10 @@ class PasswordGeneratorApp(QWidget):
         self.uppercase_value_label = QLabel(str(self.uppercase_slider.value()))
         generator_layout.addWidget(self.uppercase_value_label)
 
+        # For numbers slider (similar pattern as lowercase slider)
         self.numbers_label = QLabel("Numbers length:")
         generator_layout.addWidget(self.numbers_label)
 
-        # For numbers slider (similar pattern as lowercase slider)
         self.numbers_slider = QSlider(Qt.Horizontal)
         self.numbers_slider.setMinimum(0)
         self.numbers_slider.setMaximum(20)
@@ -124,9 +124,9 @@ class PasswordGeneratorApp(QWidget):
         self.symbols_value_label = QLabel(str(self.symbols_slider.value()))
         generator_layout.addWidget(self.symbols_value_label)
 
-
+        # Add a button to generate another password
         self.generate_button = QPushButton("Generate Password")
-        self.generate_button.clicked.connect(self.generate_password)
+        self.generate_button.clicked.connect(self.update_password)
         generator_layout.addWidget(self.generate_button)
 
         # Add a button to copy the password
@@ -134,6 +134,7 @@ class PasswordGeneratorApp(QWidget):
         self.copy_button.clicked.connect(self.copy_password_to_clipboard)
         generator_layout.addWidget(self.copy_button)
 
+        # Show the password
         self.password_label = QLabel("")
         generator_layout.addWidget(self.password_label)
 
@@ -222,12 +223,8 @@ class PasswordGeneratorApp(QWidget):
         self.entropy_label.setText(f"Entropy:\n{entropy:.2f} bits")
         self.entropy_label.setAlignment(Qt.AlignCenter)
 
-
         # Evaluate password strength
         self.update_strength_indicator(strength)
-
-    def generate_password(self):
-        self.update_password()
 
     def evaluate_strength(self, password):
         strength = (len(password) - 6) // 3 + 1 if len(password) > 5 else 0
@@ -300,12 +297,26 @@ class PasswordGeneratorApp(QWidget):
 
     def calculate_entropy(self, password):
         # Count the number of possible characters in the password
-        num_characters = sum(1 for c in password if c.isalnum() or c in string.punctuation)
+        num_characters = [0, 0, 0, 0]
 
+        for c in password:
+            if c.islower():
+                num_characters[0] = 26
+            elif c.isupper():
+                num_characters[1] = 26
+            elif c.isdigit():
+                num_characters[2] = 10
+            elif c in string.punctuation:
+                num_characters[3] = 32
+                
+            if 0 not in num_characters:
+                break
+        
+        characters = sum(num_characters)
         # Check if num_characters is zero
-        if num_characters == 0:
+        if characters == 0:
             return 0  # Return zero entropy if there are no characters
 
         # Calculate entropy in bits
-        entropy = math.log2(num_characters) * len(password)
+        entropy = math.log2(characters) * len(password)
         return entropy
