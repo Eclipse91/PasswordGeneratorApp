@@ -56,11 +56,17 @@ class PasswordGeneratorApp(QWidget):
         self.insert_position_slider.setTickInterval(1)
         self.insert_position_slider.setTickPosition(QSlider.TicksBelow)
         self.insert_position_slider.valueChanged.connect(self.update_insert_position_label)
-        generator_layout.addWidget(self.insert_position_slider)
-
         # Add a label to show the current value of the insert position slider
         self.insert_position_value_label = QLabel(str(self.insert_position_slider.value()) + '° position')
         generator_layout.addWidget(self.insert_position_value_label)
+        generator_layout.addWidget(self.insert_position_slider)
+
+        # Create a horizontal line (divider)
+        self.divider = QFrame()
+        self.divider.setFrameShape(QFrame.HLine)  # Horizontal line
+        self.divider.setFrameShadow(QFrame.Sunken)  # Sunken effect
+        # Add it to layout
+        generator_layout.addWidget(self.divider)
 
         # For lowercase slider
         self.lowercase_label = QLabel("Lowercase letters length:")
@@ -73,11 +79,11 @@ class PasswordGeneratorApp(QWidget):
         self.lowercase_slider.setTickInterval(1)
         self.lowercase_slider.setTickPosition(QSlider.TicksBelow)
         self.lowercase_slider.valueChanged.connect(self.update_lowercase_label)
-        generator_layout.addWidget(self.lowercase_slider)
 
         # Add a label to show the current value of the lowercase slider
         self.lowercase_value_label = QLabel(str(self.lowercase_slider.value()))
         generator_layout.addWidget(self.lowercase_value_label)
+        generator_layout.addWidget(self.lowercase_slider)
 
         # For uppercase slider (similar pattern as lowercase slider)
         self.uppercase_label = QLabel("Uppercase letters length:")
@@ -90,9 +96,9 @@ class PasswordGeneratorApp(QWidget):
         self.uppercase_slider.setTickInterval(1)
         self.uppercase_slider.setTickPosition(QSlider.TicksBelow)
         self.uppercase_slider.valueChanged.connect(self.update_uppercase_label)
-        generator_layout.addWidget(self.uppercase_slider)
         self.uppercase_value_label = QLabel(str(self.uppercase_slider.value()))
         generator_layout.addWidget(self.uppercase_value_label)
+        generator_layout.addWidget(self.uppercase_slider)
 
         # For numbers slider (similar pattern as lowercase slider)
         self.numbers_label = QLabel("Numbers length:")
@@ -105,9 +111,9 @@ class PasswordGeneratorApp(QWidget):
         self.numbers_slider.setTickInterval(1)
         self.numbers_slider.setTickPosition(QSlider.TicksBelow)
         self.numbers_slider.valueChanged.connect(self.update_numbers_label)
-        generator_layout.addWidget(self.numbers_slider)
         self.numbers_value_label = QLabel(str(self.numbers_slider.value()))
         generator_layout.addWidget(self.numbers_value_label)
+        generator_layout.addWidget(self.numbers_slider)
 
         self.symbols_label = QLabel("Symbols length:")
         generator_layout.addWidget(self.symbols_label)
@@ -120,9 +126,16 @@ class PasswordGeneratorApp(QWidget):
         self.symbols_slider.setTickInterval(1)
         self.symbols_slider.setTickPosition(QSlider.TicksBelow)
         self.symbols_slider.valueChanged.connect(self.update_symbols_label)
-        generator_layout.addWidget(self.symbols_slider)
         self.symbols_value_label = QLabel(str(self.symbols_slider.value()))
         generator_layout.addWidget(self.symbols_value_label)
+        generator_layout.addWidget(self.symbols_slider)
+
+        # Create a horizontal line (divider)
+        self.divider = QFrame()
+        self.divider.setFrameShape(QFrame.HLine)  # Horizontal line
+        self.divider.setFrameShadow(QFrame.Sunken)  # Sunken effect
+        # Add it to layout
+        generator_layout.addWidget(self.divider)
 
         # Add a button to generate another password
         self.generate_button = QPushButton("Generate Password")
