@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QSizePolicy
 class PasswordGeneratorApp(QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("Password Generator")
+        self.setWindowTitle('Password Generator')
         self.setGeometry(100, 100, 600, 300)
 
         self.layout = QHBoxLayout()
@@ -38,14 +38,14 @@ class PasswordGeneratorApp(QWidget):
                 widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
                 # widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
-        self.custom_string_label = QLabel("Custom String:")
+        self.custom_string_label = QLabel('Custom String:')
         generator_layout.addWidget(self.custom_string_label)
 
-        self.custom_string_input = QLineEdit("")
+        self.custom_string_input = QLineEdit('')
         self.custom_string_input.textChanged.connect(self.update_password)
         generator_layout.addWidget(self.custom_string_input)
 
-        self.insert_position_label = QLabel("Insert custom text in:")
+        self.insert_position_label = QLabel('Insert custom text in:')
         generator_layout.addWidget(self.insert_position_label)
 
         # For insert position slider
@@ -69,7 +69,7 @@ class PasswordGeneratorApp(QWidget):
         generator_layout.addWidget(self.divider)
 
         # For lowercase slider
-        self.lowercase_label = QLabel("Lowercase letters length:")
+        self.lowercase_label = QLabel('Lowercase letters length:')
         generator_layout.addWidget(self.lowercase_label)
 
         self.lowercase_slider = QSlider(Qt.Horizontal)
@@ -86,7 +86,7 @@ class PasswordGeneratorApp(QWidget):
         generator_layout.addWidget(self.lowercase_slider)
 
         # For uppercase slider (similar pattern as lowercase slider)
-        self.uppercase_label = QLabel("Uppercase letters length:")
+        self.uppercase_label = QLabel('Uppercase letters length:')
         generator_layout.addWidget(self.uppercase_label)
 
         self.uppercase_slider = QSlider(Qt.Horizontal)
@@ -101,7 +101,7 @@ class PasswordGeneratorApp(QWidget):
         generator_layout.addWidget(self.uppercase_slider)
 
         # For numbers slider (similar pattern as lowercase slider)
-        self.numbers_label = QLabel("Numbers length:")
+        self.numbers_label = QLabel('Numbers length:')
         generator_layout.addWidget(self.numbers_label)
 
         self.numbers_slider = QSlider(Qt.Horizontal)
@@ -115,7 +115,7 @@ class PasswordGeneratorApp(QWidget):
         generator_layout.addWidget(self.numbers_value_label)
         generator_layout.addWidget(self.numbers_slider)
 
-        self.symbols_label = QLabel("Symbols length:")
+        self.symbols_label = QLabel('Symbols length:')
         generator_layout.addWidget(self.symbols_label)
 
         # For symbols slider (similar pattern as lowercase slider)
@@ -138,17 +138,18 @@ class PasswordGeneratorApp(QWidget):
         generator_layout.addWidget(self.divider)
 
         # Add a button to generate another password
-        self.generate_button = QPushButton("Generate Password")
+        self.generate_button = QPushButton('Generate Password')
         self.generate_button.clicked.connect(self.update_password)
         generator_layout.addWidget(self.generate_button)
 
         # Add a button to copy the password
-        self.copy_button = QPushButton("Copy Password")
+        self.copy_button = QPushButton('Copy Password')
         self.copy_button.clicked.connect(self.copy_password_to_clipboard)
         generator_layout.addWidget(self.copy_button)
 
         # Show the password
-        self.password_label = QLabel("")
+        self.password_label = QLabel('')
+        self.password_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         generator_layout.addWidget(self.password_label)
 
         self.layout.addLayout(generator_layout)
@@ -185,22 +186,22 @@ class PasswordGeneratorApp(QWidget):
                 # widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
         # Label to display the length of the generated password
-        self.password_length_label = QLabel("Password Length:\n0")
+        self.password_length_label = QLabel('Password Length:\n0')
         self.password_length_label.setAlignment(Qt.AlignCenter)
         evaluator_layout.addWidget(self.password_length_label)
 
-        self.strength_label = QLabel("Password Strength:\n")
+        self.strength_label = QLabel('Password Strength:\n')
         self.strength_label.setAlignment(Qt.AlignCenter)
         evaluator_layout.addWidget(self.strength_label)
         
         # Add a label to display entropy
-        self.entropy_label = QLabel("Entropy:\n0")
+        self.entropy_label = QLabel('Entropy:\n0')
         self.entropy_label.setAlignment(Qt.AlignCenter)
         evaluator_layout.addWidget(self.entropy_label)
 
         self.strength_indicator = QLabel()
         self.strength_indicator.setAlignment(Qt.AlignCenter)
-        self.strength_indicator.setStyleSheet("QLabel { background-color: red; border: 1px solid black; }")
+        self.strength_indicator.setStyleSheet('QLabel { background-color: red; border: 1px solid black; }')
         evaluator_layout.addWidget(self.strength_indicator)
 
         self.layout.addLayout(evaluator_layout)
@@ -222,18 +223,29 @@ class PasswordGeneratorApp(QWidget):
 
         password = ''.join(random.sample(chars, len(chars)))
         password = password[:insert_position] + custom_string + password[insert_position:]
+        print(self.password_label.text())
+        if self.password_label.text() == '':
+            if chars == '':
+                pass
+            else:
+                self.password_label.setText(password)
+        else:
+            if chars == '':
+                pass
+            elif len(self.password_label.text().splitlines()) < 10:
+                self.password_label.setText(self.password_label.text() + '\n' + password)
+            else:
+                self.password_label.setText('\n'.join(self.password_label.text().splitlines()[-9:]) + '\n' + password)
 
-        self.password_label.setText(password)
-        
         # Display the length of the generated password
-        self.password_length_label.setText(f"Password Length:\n{len(password)}")
+        self.password_length_label.setText(f'Password Length:\n{len(password)}')
         self.password_length_label.setAlignment(Qt.AlignCenter)
         strength = self.evaluate_strength(password)
-        self.strength_label.setText(f"Password Strength:\n{self.update_strength(strength)}")
+        self.strength_label.setText(f'Password Strength:\n{self.update_strength(strength)}')
         self.strength_label.setAlignment(Qt.AlignCenter)
         # Calculate and display entropy
         entropy = self.calculate_entropy(password)
-        self.entropy_label.setText(f"Entropy:\n{entropy:.2f} bits")
+        self.entropy_label.setText(f'Entropy:\n{entropy:.2f} bits')
         self.entropy_label.setAlignment(Qt.AlignCenter)
 
         # Evaluate password strength
@@ -256,57 +268,57 @@ class PasswordGeneratorApp(QWidget):
     def update_strength_indicator(self, strength):
         # Set color based on strength level
         if strength <= 1:
-            color = "red"
+            color = 'red'
         elif strength <= 3:
-            color = "orange"
+            color = 'orange'
         elif strength <= 5:
-            color = "yellow"
+            color = 'yellow'
         elif strength <= 7:
-            color = "lime"
+            color = 'lime'
         elif strength <= 9:
-            color = "green"
+            color = 'green'
         # elif strength <= 12:
-        #     color = "cyan"
+        #     color = 'cyan'
         elif strength <= 15:
-            color = "blue"
+            color = 'blue'
         else: #if strength <= 18:
-            color = "indigo"
+            color = 'indigo'
         # else:
-        #     color = "violet"
+        #     color = 'violet'
 
-        self.strength_indicator.setStyleSheet(f"QLabel {{ background-color: {color}; border: 1px solid black; }}")
-        self.strength_indicator.setText(f"Strength Level: {strength}")
+        self.strength_indicator.setStyleSheet(f'QLabel {{ background-color: {color}; border: 1px solid black; }}')
+        self.strength_indicator.setText(f'Strength Level: {strength}')
 
     def update_strength(self, strength):
         if strength <= 1:
-            strength_level = "Very Weak"
+            strength_level = 'Very Weak'
         elif strength <= 3:
-            strength_level = "Weak"
+            strength_level = 'Weak'
         elif strength <= 5:
-            strength_level = "Moderate"
+            strength_level = 'Moderate'
         elif strength <= 7:
-            strength_level = "Fair"
+            strength_level = 'Fair'
         elif strength <= 9:
-            strength_level = "Good"
+            strength_level = 'Good'
         elif strength <= 12:
-            strength_level = "Strong"
+            strength_level = 'Strong'
         elif strength <= 15:
-            strength_level = "Very Strong"
+            strength_level = 'Very Strong'
         elif strength <= 18:
-            strength_level = "Excellent"
+            strength_level = 'Excellent'
         else:
-            strength_level = "Outstanding"
+            strength_level = 'Outstanding'
         
         return strength_level
 
     def copy_password_to_clipboard(self):
-        password = self.password_label.text()
+        password = self.password_label.text().splitlines()[-1]
         if password:
             clipboard = QApplication.clipboard()
             clipboard.setText(password)
-            # QMessageBox.information(self, "Password Copied", "Password copied to clipboard.")
+            # QMessageBox.information(self, 'Password Copied', 'Password copied to clipboard.')
         else:
-            QMessageBox.warning(self, "No Password", "No password generated yet.")
+            QMessageBox.warning(self, 'No Password', 'No password generated yet.')
 
     def calculate_entropy(self, password):
         # Count the number of possible characters in the password

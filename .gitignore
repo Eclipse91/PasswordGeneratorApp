@@ -9,3 +9,8 @@ __pycache__/
 
 # Ignore the .vscode folder
 .vscode
+
+# PyInstaller files
+*.spec
+dist/
+build/
