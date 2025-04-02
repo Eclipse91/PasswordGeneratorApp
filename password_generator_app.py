@@ -1,16 +1,60 @@
+import math
 import random
 import string
-import math
 from PyQt5.QtWidgets import QApplication, QWidget, QVBoxLayout, QLabel, QPushButton, QLineEdit, QSlider, QFrame, QHBoxLayout, QMessageBox
+from PyQt5.QtWidgets import QSizePolicy, QDialog, QCheckBox, QVBoxLayout, QPushButton, QGridLayout, QWidget
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QSizePolicy
 
+
+class CharacterSelectionDialog(QDialog):
+    def __init__(self, category_name, all_chars, selected_chars, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle(f'{category_name}')
+        self.setGeometry(100, 100, 300, 200)
+        self.selected_chars = set(selected_chars)
+        self.all_chars = all_chars
+
+        layout = QVBoxLayout()
+        grid_layout = QGridLayout()
+        self.checkboxes = []
+
+        columns = 5  # Number of columns
+        for index, char in enumerate(all_chars):
+            checkbox = QCheckBox(char)
+            checkbox.setChecked(char in self.selected_chars)
+            checkbox.stateChanged.connect(self.update_selection)
+            self.checkboxes.append(checkbox)
+            grid_layout.addWidget(checkbox, index // columns, index % columns)
+
+        layout.addLayout(grid_layout)
+        
+        self.confirm_button = QPushButton('Confirm')
+        self.confirm_button.clicked.connect(self.accept)
+        layout.addWidget(self.confirm_button)
+
+        self.setLayout(layout)
+
+    def update_selection(self):
+        self.selected_chars = {cb.text() for cb in self.checkboxes if cb.isChecked()}
+
+    def get_selected_chars(self):
+        return ''.join(self.selected_chars)
+    
 
 class PasswordGeneratorApp(QWidget):
     def __init__(self):
         super().__init__()
+        self.all_lowercase_chars = string.ascii_lowercase
+        self.all_uppercase_chars = string.ascii_uppercase
+        self.all_numbers_chars = string.digits
+        self.all_symbols_chars = string.punctuation
+
+        self.lowercase_chars = self.all_lowercase_chars
+        self.uppercase_chars = self.all_uppercase_chars
+        self.numbers_chars = self.all_numbers_chars
+        self.symbols_chars = self.all_symbols_chars
         self.setWindowTitle('Password Generator')
-        self.setGeometry(100, 100, 600, 300)
+        self.setGeometry(100, 100, 750, 750)
 
         self.layout = QHBoxLayout()
 
@@ -36,7 +80,6 @@ class PasswordGeneratorApp(QWidget):
             widget = item.widget()
             if widget:
                 widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-                # widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
         self.custom_string_label = QLabel('Custom String:')
         generator_layout.addWidget(self.custom_string_label)
@@ -44,9 +87,6 @@ class PasswordGeneratorApp(QWidget):
         self.custom_string_input = QLineEdit('')
         self.custom_string_input.textChanged.connect(self.update_password)
         generator_layout.addWidget(self.custom_string_input)
-
-        self.insert_position_label = QLabel('Insert custom text in:')
-        generator_layout.addWidget(self.insert_position_label)
 
         # For insert position slider
         self.insert_position_slider = QSlider(Qt.Horizontal)
@@ -57,7 +97,7 @@ class PasswordGeneratorApp(QWidget):
         self.insert_position_slider.setTickPosition(QSlider.TicksBelow)
         self.insert_position_slider.valueChanged.connect(self.update_insert_position_label)
         # Add a label to show the current value of the insert position slider
-        self.insert_position_value_label = QLabel(str(self.insert_position_slider.value()) + '° position')
+        self.insert_position_value_label = QLabel('Insert Custom String in: ' + str(self.insert_position_slider.value()) + '° position')
         generator_layout.addWidget(self.insert_position_value_label)
         generator_layout.addWidget(self.insert_position_slider)
 
@@ -69,8 +109,10 @@ class PasswordGeneratorApp(QWidget):
         generator_layout.addWidget(self.divider)
 
         # For lowercase slider
-        self.lowercase_label = QLabel('Lowercase letters length:')
-        generator_layout.addWidget(self.lowercase_label)
+        self.lowercase_customize_button = QPushButton('Select Lowercase Letters')
+        self.lowercase_customize_button.setFixedSize(150, 30)
+        self.lowercase_customize_button.clicked.connect(lambda: self.open_char_selector('Lowercase', 'lowercase_chars', 'all_lowercase_chars'))
+        generator_layout.addWidget(self.lowercase_customize_button)
 
         self.lowercase_slider = QSlider(Qt.Horizontal)
         self.lowercase_slider.setMinimum(0)
@@ -80,15 +122,16 @@ class PasswordGeneratorApp(QWidget):
         self.lowercase_slider.setTickPosition(QSlider.TicksBelow)
         self.lowercase_slider.valueChanged.connect(self.update_lowercase_label)
 
-        # Add a label to show the current value of the lowercase slider
-        self.lowercase_value_label = QLabel(str(self.lowercase_slider.value()))
+        self.lowercase_value_label = QLabel('Select Lowercase Quantity: ' + str(self.lowercase_slider.value()))
         generator_layout.addWidget(self.lowercase_value_label)
         generator_layout.addWidget(self.lowercase_slider)
 
-        # For uppercase slider (similar pattern as lowercase slider)
-        self.uppercase_label = QLabel('Uppercase letters length:')
-        generator_layout.addWidget(self.uppercase_label)
-
+        # For uppercase slider
+        self.uppercase_customize_button = QPushButton('Select Uppercase Letters')
+        self.uppercase_customize_button.setFixedSize(150, 30)
+        self.uppercase_customize_button.clicked.connect(lambda: self.open_char_selector('Uppercase', 'uppercase_chars', 'all_uppercase_chars'))
+        generator_layout.addWidget(self.uppercase_customize_button)
+        
         self.uppercase_slider = QSlider(Qt.Horizontal)
         self.uppercase_slider.setMinimum(0)
         self.uppercase_slider.setMaximum(20)
@@ -96,13 +139,16 @@ class PasswordGeneratorApp(QWidget):
         self.uppercase_slider.setTickInterval(1)
         self.uppercase_slider.setTickPosition(QSlider.TicksBelow)
         self.uppercase_slider.valueChanged.connect(self.update_uppercase_label)
-        self.uppercase_value_label = QLabel(str(self.uppercase_slider.value()))
+
+        self.uppercase_value_label = QLabel('Select Uppercase Quantity: ' + str(self.uppercase_slider.value()))
         generator_layout.addWidget(self.uppercase_value_label)
         generator_layout.addWidget(self.uppercase_slider)
 
-        # For numbers slider (similar pattern as lowercase slider)
-        self.numbers_label = QLabel('Numbers length:')
-        generator_layout.addWidget(self.numbers_label)
+        # For numbers slider
+        self.numbers_customize_button = QPushButton('Select Numbers')
+        self.numbers_customize_button.setFixedSize(150, 30)
+        self.numbers_customize_button.clicked.connect(lambda: self.open_char_selector('Numbers', 'numbers_chars', 'all_numbers_chars'))
+        generator_layout.addWidget(self.numbers_customize_button)
 
         self.numbers_slider = QSlider(Qt.Horizontal)
         self.numbers_slider.setMinimum(0)
@@ -111,14 +157,17 @@ class PasswordGeneratorApp(QWidget):
         self.numbers_slider.setTickInterval(1)
         self.numbers_slider.setTickPosition(QSlider.TicksBelow)
         self.numbers_slider.valueChanged.connect(self.update_numbers_label)
-        self.numbers_value_label = QLabel(str(self.numbers_slider.value()))
+
+        self.numbers_value_label = QLabel('Select Numbers Quantity: ' + str(self.numbers_slider.value()))
         generator_layout.addWidget(self.numbers_value_label)
         generator_layout.addWidget(self.numbers_slider)
 
-        self.symbols_label = QLabel('Symbols length:')
-        generator_layout.addWidget(self.symbols_label)
+        self.symbols_customize_button = QPushButton('Select Symbols')
+        self.symbols_customize_button.setFixedSize(150, 30)
+        self.symbols_customize_button.clicked.connect(lambda: self.open_char_selector('Symbols', 'symbols_chars', 'all_symbols_chars'))
+        generator_layout.addWidget(self.symbols_customize_button)
 
-        # For symbols slider (similar pattern as lowercase slider)
+        # For symbols slider
         self.symbols_slider = QSlider(Qt.Horizontal)
         self.symbols_slider.setMinimum(0)
         self.symbols_slider.setMaximum(20)
@@ -126,15 +175,15 @@ class PasswordGeneratorApp(QWidget):
         self.symbols_slider.setTickInterval(1)
         self.symbols_slider.setTickPosition(QSlider.TicksBelow)
         self.symbols_slider.valueChanged.connect(self.update_symbols_label)
-        self.symbols_value_label = QLabel(str(self.symbols_slider.value()))
+
+        self.symbols_value_label = QLabel('Select Symbols Quantity: ' + str(self.symbols_slider.value()))
         generator_layout.addWidget(self.symbols_value_label)
         generator_layout.addWidget(self.symbols_slider)
 
         # Create a horizontal line (divider)
         self.divider = QFrame()
-        self.divider.setFrameShape(QFrame.HLine)  # Horizontal line
-        self.divider.setFrameShadow(QFrame.Sunken)  # Sunken effect
-        # Add it to layout
+        self.divider.setFrameShape(QFrame.HLine)
+        self.divider.setFrameShadow(QFrame.Sunken)
         generator_layout.addWidget(self.divider)
 
         # Add a button to generate another password
@@ -143,35 +192,41 @@ class PasswordGeneratorApp(QWidget):
         generator_layout.addWidget(self.generate_button)
 
         # Add a button to copy the password
-        self.copy_button = QPushButton('Copy Password')
+        self.copy_button = QPushButton('Copy Last Password')
         self.copy_button.clicked.connect(self.copy_password_to_clipboard)
         generator_layout.addWidget(self.copy_button)
 
         # Show the password
-        self.password_label = QLabel('')
+        self.password_label = QLabel('\n'*11)
         self.password_label.setTextInteractionFlags(Qt.TextSelectableByMouse)
         generator_layout.addWidget(self.password_label)
 
         self.layout.addLayout(generator_layout)
-        
+
+    def open_char_selector(self, category, attr_name, all_attr_name):
+        dialog = CharacterSelectionDialog(category, getattr(self, all_attr_name), getattr(self, attr_name), self)
+        if dialog.exec_():
+            setattr(self, attr_name, dialog.get_selected_chars())
+            self.update_password()
+
     def update_insert_position_label(self, value):
-        self.insert_position_value_label.setText(str(value) + '° position'  )
+        self.insert_position_value_label.setText('Insert Custom Text in: ' + str(value) + '° position'  )
         self.update_password()
 
     def update_lowercase_label(self, value):
-        self.lowercase_value_label.setText(str(value))
+        self.lowercase_value_label.setText('Select Lowercase Quantity: ' + str(value))
         self.update_password()
 
     def update_uppercase_label(self, value):
-        self.uppercase_value_label.setText(str(value))
+        self.uppercase_value_label.setText('Select Uppercase Quantity: ' + str(value))
         self.update_password()
 
     def update_numbers_label(self, value):
-        self.numbers_value_label.setText(str(value))
+        self.numbers_value_label.setText('Select Numbers Quantity: ' + str(value))
         self.update_password()
 
     def update_symbols_label(self, value):
-        self.symbols_value_label.setText(str(value))
+        self.symbols_value_label.setText('Select Symbols Quantity: ' + str(value))
         self.update_password()
 
     def setup_password_evaluator(self):
@@ -208,34 +263,26 @@ class PasswordGeneratorApp(QWidget):
 
     def update_password(self):
         custom_string = self.custom_string_input.text()
+        insert_position = self.insert_position_slider.value() - 1
 
         lowercase_length = self.lowercase_slider.value()
         uppercase_length = self.uppercase_slider.value()
         numbers_length = self.numbers_slider.value()
         symbols_length = self.symbols_slider.value()
-        insert_position = self.insert_position_slider.value() - 1
 
         chars = ''
-        chars += ''.join(random.choice(string.ascii_lowercase) for _ in range(lowercase_length))
-        chars += ''.join(random.choice(string.ascii_uppercase) for _ in range(uppercase_length))
-        chars += ''.join(random.choice(string.digits) for _ in range(numbers_length))
-        chars += ''.join(random.choice(string.punctuation) for _ in range(symbols_length))
+        chars += ''.join(random.choice(self.lowercase_chars) for _ in range(lowercase_length))
+        chars += ''.join(random.choice(self.uppercase_chars) for _ in range(uppercase_length))
+        chars += ''.join(random.choice(self.numbers_chars) for _ in range(numbers_length))
+        chars += ''.join(random.choice(self.symbols_chars) for _ in range(symbols_length))
 
         password = ''.join(random.sample(chars, len(chars)))
         password = password[:insert_position] + custom_string + password[insert_position:]
-        print(self.password_label.text())
-        if self.password_label.text() == '':
-            if chars == '':
-                pass
-            else:
-                self.password_label.setText(password)
+
+        if len(self.password_label.text().splitlines()) < 10:
+            self.password_label.setText(self.password_label.text() + '\n' + password)
         else:
-            if chars == '':
-                pass
-            elif len(self.password_label.text().splitlines()) < 10:
-                self.password_label.setText(self.password_label.text() + '\n' + password)
-            else:
-                self.password_label.setText('\n'.join(self.password_label.text().splitlines()[-9:]) + '\n' + password)
+            self.password_label.setText('\n'.join(self.password_label.text().splitlines()[-10:]) + '\n' + password)
 
         # Display the length of the generated password
         self.password_length_label.setText(f'Password Length:\n{len(password)}')
@@ -326,13 +373,13 @@ class PasswordGeneratorApp(QWidget):
 
         for c in password:
             if c.islower():
-                num_characters[0] = 26
+                num_characters[0] = len(self.lowercase_chars)
             elif c.isupper():
-                num_characters[1] = 26
+                num_characters[1] = len(self.uppercase_chars)
             elif c.isdigit():
-                num_characters[2] = 10
+                num_characters[2] = len(self.numbers_chars)
             elif c in string.punctuation:
-                num_characters[3] = 32
+                num_characters[3] = len(self.symbols_chars)
                 
             if 0 not in num_characters:
                 break
