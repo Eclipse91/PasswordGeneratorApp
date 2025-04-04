@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication
 from password_generator_app import PasswordGeneratorApp
 
 
-__version__ = '1.1.0'
+__version__ = '2.0.0'
 
 def main():
     parser = argparse.ArgumentParser(description='Password Generator App')
@@ -15,10 +15,10 @@ def main():
         print(__version__)
     else:
         # print('Running Password Generator...')
-            app = QApplication(sys.argv)
-            window = PasswordGeneratorApp()
-            window.show()
-            sys.exit(app.exec_())
+        app = QApplication(sys.argv)
+        window = PasswordGeneratorApp()
+        window.show()
+        sys.exit(app.exec_())
 
 if __name__ == '__main__':
     main()

@@ -53,8 +53,10 @@ class PasswordGeneratorApp(QWidget):
         self.uppercase_chars = self.all_uppercase_chars
         self.numbers_chars = self.all_numbers_chars
         self.symbols_chars = self.all_symbols_chars
+        self.is_dark_mode = True
         self.setWindowTitle('Password Generator')
         self.setGeometry(100, 100, 750, 750)
+        self.setStyleSheet(self.load_stylesheet("styles/dark.qss" if self.is_dark_mode else "styles/light.qss"))
 
         self.layout = QHBoxLayout()
 
@@ -110,7 +112,7 @@ class PasswordGeneratorApp(QWidget):
 
         # For lowercase slider
         self.lowercase_customize_button = QPushButton('Select Lowercase Letters')
-        self.lowercase_customize_button.setFixedSize(150, 30)
+        self.lowercase_customize_button.setFixedSize(180, 30)
         self.lowercase_customize_button.clicked.connect(lambda: self.open_char_selector('Lowercase', 'lowercase_chars', 'all_lowercase_chars'))
         generator_layout.addWidget(self.lowercase_customize_button)
 
@@ -128,7 +130,7 @@ class PasswordGeneratorApp(QWidget):
 
         # For uppercase slider
         self.uppercase_customize_button = QPushButton('Select Uppercase Letters')
-        self.uppercase_customize_button.setFixedSize(150, 30)
+        self.uppercase_customize_button.setFixedSize(180, 30)
         self.uppercase_customize_button.clicked.connect(lambda: self.open_char_selector('Uppercase', 'uppercase_chars', 'all_uppercase_chars'))
         generator_layout.addWidget(self.uppercase_customize_button)
         
@@ -146,7 +148,7 @@ class PasswordGeneratorApp(QWidget):
 
         # For numbers slider
         self.numbers_customize_button = QPushButton('Select Numbers')
-        self.numbers_customize_button.setFixedSize(150, 30)
+        self.numbers_customize_button.setFixedSize(180, 30)
         self.numbers_customize_button.clicked.connect(lambda: self.open_char_selector('Numbers', 'numbers_chars', 'all_numbers_chars'))
         generator_layout.addWidget(self.numbers_customize_button)
 
@@ -163,7 +165,7 @@ class PasswordGeneratorApp(QWidget):
         generator_layout.addWidget(self.numbers_slider)
 
         self.symbols_customize_button = QPushButton('Select Symbols')
-        self.symbols_customize_button.setFixedSize(150, 30)
+        self.symbols_customize_button.setFixedSize(180, 30)
         self.symbols_customize_button.clicked.connect(lambda: self.open_char_selector('Symbols', 'symbols_chars', 'all_symbols_chars'))
         generator_layout.addWidget(self.symbols_customize_button)
 
@@ -241,6 +243,10 @@ class PasswordGeneratorApp(QWidget):
                 # widget.setSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
 
         # Label to display the length of the generated password
+        self.change_theme = QPushButton('Light' if self.is_dark_mode else 'Dark')
+        self.change_theme.clicked.connect(lambda: self.toggle_theme())
+        evaluator_layout.addWidget(self.change_theme)
+
         self.password_length_label = QLabel('Password Length:\n0')
         self.password_length_label.setAlignment(Qt.AlignCenter)
         evaluator_layout.addWidget(self.password_length_label)
@@ -297,6 +303,15 @@ class PasswordGeneratorApp(QWidget):
 
         # Evaluate password strength
         self.update_strength_indicator(strength)
+
+    def toggle_theme(self):
+        self.is_dark_mode = not self.is_dark_mode
+        self.setStyleSheet(self.load_stylesheet("styles/dark.qss" if self.is_dark_mode else "styles/light.qss"))
+        self.change_theme.setText('Light' if self.is_dark_mode else 'Dark')
+
+    def load_stylesheet(self, filename):
+        with open(filename, "r") as f:
+            return f.read()
 
     def evaluate_strength(self, password):
         strength = (len(password) - 6) // 3 + 1 if len(password) > 5 else 0
